@@ -1,4 +1,4 @@
-package pkg
+package inputters
 
 import (
 	"bufio"
