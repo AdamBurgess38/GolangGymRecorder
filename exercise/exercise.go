@@ -1,6 +1,9 @@
 package exercise
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type UsersExercise struct{
 	Exercises map[string]Exercise
@@ -12,18 +15,18 @@ type Exercise struct {
 }
 
 type Iteration struct {
-	Reps []float32
-	Weights []float32
-	Variances []float32
+	Reps []float64
+	Weights []float64
+	Variances []float64
 	ID int
 	Sets int
-	Weight float32
+	Weight float64
 	Date string
 	Note string
-	TotalWeight float32
-	AverageWeight float32
-	AverageRep float32
-	AverageWeightRepTotal float32
+	TotalWeight float64
+	AverageWeight float64
+	AverageRep float64
+	AverageWeightRepTotal float64
 }
 
 type StatsFormat int64
@@ -36,25 +39,22 @@ const (
 )
 
 func ViewAnExercise(ue *UsersExercise, requestedExercise string, t StatsFormat) string{
-	entry, ok := ue.Exercises[requestedExercise];
-	if ok {
-		fmt.Println("Excercise exists")
-	}	
+	entry, ok := ue.Exercises[requestedExercise];	
 	if !ok {
-		fmt.Println("Invalid")
+		fmt.Println("Invalid excerise")
 		return "";
 	}
     switch t {
     case StandardStats:
         return fetchStandardStats(entry)
     case AverageOverall:
-        return fetchStandardStats(entry)
+        return fetchAverageOverall(entry)
     case SimpleStats:
-        return fetchStandardStats(entry)
+        return fetchSimpleStats(entry)
 	case MostRecent:
-		return fetchStandardStats(entry)
+		return fetchMostRecent(entry)
     }
-	return fetchStandardStats(entry)
+	return "Invalid stats type"
 }
 
 func boltOnSeperator() string{
@@ -63,20 +63,62 @@ func boltOnSeperator() string{
 
 func fetchStandardStats(ex Exercise) string{
 	returnString := ""
-	// for _ , iter := range ex.Iterations {
-	// 	returnString += "Date: " +iter.Date + "\n" +
-	// 					"Planned Weight: " + iter.Weight + "\n" +
-	// 					"Number of Sets: " + iter.Sets + "\n" +
-	// 					"Weights per set: " + iter.Weights + "\n" +
-	// 					"Reps per set: " + iter.Reps + "\n" +
-	// 					"Average Weight: " + iter.
-	// 	returnString += boltOnSeperator();
-	// }
-
+	for _ , iter := range ex.Iterations {
+		returnString += instanceConverter(iter)
+		returnString += boltOnSeperator();
+	}
 	return returnString;
 }
 
-func NewIteration(reps []float32, weights []float32, variances []float32, ID int, sets int, weight float32, date string, note string, totalWeight float32, averageRep float32, averageWeight float32, averageWeightRepTotal float32) *Iteration{
+func instanceConverter(iter Iteration) string {
+	return "Date: " + iter.Date + "\n" +
+	"Planned Weight: " + strconv.FormatFloat(iter.Weight, 'f', 2, 64) + "\n" +
+	"Number of Sets: " + strconv.Itoa(iter.Sets) + "\n" +
+	"Weights per set: " + arrayToString(iter.Weights) + "\n" +
+	"Reps per set: " + arrayToString(iter.Reps) + "\n" +
+	"Average Weight: " + strconv.FormatFloat(iter.AverageWeight, 'f', 2, 64)+ "\n" +
+	"Average reps: " + strconv.FormatFloat(iter.AverageRep, 'f', 2, 64) + "\n" +
+	"Average total: " + strconv.FormatFloat(iter.AverageWeightRepTotal, 'f', 2, 64)+ "\n" +
+	"Note: " + iter.Note +"\n";
+}
+
+func fetchAverageOverall(ex Exercise) string{
+	returnString := "";
+	for _ , iter := range ex.Iterations {
+		returnString += "Date: " + iter.Date + " Average Weight: " + strconv.FormatFloat(iter.AverageWeight, 'f', 2, 64) +" Average Rep: " + strconv.FormatFloat(iter.AverageRep, 'f', 2, 64) +"\n"
+	}
+	return returnString;
+}
+
+func fetchSimpleStats(ex Exercise) string{
+	returnString := "";
+	for _ , iter := range ex.Iterations {
+		returnString += "Date: " + iter.Date + " Weights: " + arrayToString(iter.Weights) +" Reps: " + arrayToString(iter.Reps) +"\n"
+	}
+	return returnString;
+}
+
+func fetchMostRecent(ex Exercise) string{
+	returnString := ""
+	latestIndex := len(ex.Iterations);
+	iter := ex.Iterations[latestIndex-1]
+	
+		returnString += instanceConverter(iter)
+		returnString += boltOnSeperator();
+	
+	return returnString;
+}
+
+func arrayToString(array []float64) string{
+	returnString := ""
+	for _ , x := range array{
+		returnString += strconv.FormatFloat(x, 'f', 2, 64) +","
+	}
+	return returnString[0:len(returnString)-1];
+
+}
+
+func NewIteration(reps []float64, weights []float64, variances []float64, ID int, sets int, weight float64, date string, note string, totalWeight float64, averageRep float64, averageWeight float64, averageWeightRepTotal float64) *Iteration{
 	return &(
 		Iteration{
 			Reps: reps, 

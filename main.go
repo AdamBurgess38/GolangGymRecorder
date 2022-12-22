@@ -7,14 +7,14 @@ import (
 	"packages/startup"
 )
 
-type StatsFormat int64
+// type StatsFormat int64
 
-const (
-	StandardStats StatsFormat = iota
-	AverageOverall        = 1
-	SimpleStats        = 2
-	MostRecent        = 3
-)
+// const (
+// 	StandardStats StatsFormat = iota
+// 	AverageOverall        = 1
+// 	SimpleStats        = 2
+// 	MostRecent        = 3
+// )
 
 func initaliseListOfKeys(){
 	var kys []string
@@ -89,8 +89,8 @@ func main() {
     userInfo = startup.StartUp()
     // fmt.Println(userInfo)
 	startup.SaveUser(userInfo)
-	exercise.AddIteration(userInfo, "ZZZZZZZZZZZZZ", *exercise.NewIteration([]float32{1,2,3,4,5}, 
-		[]float32{1,2,3,4,5}, []float32{1,2,3,4,5},
+	exercise.AddIteration(userInfo, "ZZZZZZZZZZZZZ", *exercise.NewIteration([]float64{1,2,3,4,5}, 
+		[]float64{1,2,3,4,5}, []float64{1,2,3,4,5},
 		5,
 		 5, 
 		 4.5,
@@ -106,7 +106,7 @@ func main() {
 	printAllExceriseNames()
 	
 	
-	fmt.Println(exercise.ViewAnExercise(userInfo,"Barbell Bench" , AverageOverall))
+	fmt.Println(exercise.ViewAnExercise(userInfo,"Barbell Bench" , exercise.AverageOverall))
 }
 
 
