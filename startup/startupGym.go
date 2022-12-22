@@ -62,7 +62,7 @@ func loadUser() * exercise.UsersExercise{
 	}
 	
 	json.Unmarshal([]byte(data), &ue)
-	Backupfile()
+	backupfile()
 	return ue;
 }
 
